@@ -1,7 +1,10 @@
-<script setup>
-
-
-</script>
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <h1>Home</h1>
+  <ProductList />
+  <ProductList />
 </template>
+  
+  <script setup lang="ts">
+    import ProductList from '../components/ProductList.vue'
+
+  </script>
