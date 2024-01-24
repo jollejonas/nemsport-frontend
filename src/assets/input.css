@@ -13,3 +13,7 @@
   padding: 10px; /* Optional padding for spacing between paragraphs */
 
 }
+
+.max-h-400 {
+  max-height: 400px;
+}
