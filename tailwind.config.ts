@@ -3,6 +3,8 @@ module.exports = {
   content: [
     './public/**/*.html',
     './src/**/*.{js,jsx,ts,tsx,vue}',
+    'node_modules/flowbite-vue/**/*.{js,jsx,ts,tsx,vue}',
+    'node_modules/flowbite/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
     extend: {
@@ -13,6 +15,7 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/forms')],
+    require('@tailwindcss/forms'),
+    require('flowbite/plugin')],
 }
 
