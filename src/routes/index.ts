@@ -24,7 +24,8 @@ const routes: Array<RouteRecordRaw> = [
             { path: 'manage-products', name: 'Manage Products', component: () => import("@/views/Admin/Products/ManageProducts.vue")},
             { path: 'manage-variations', name: 'Manage Variations', component: () => import("@/views/Admin/Products/ManageVariations.vue")},
             { path: 'manage-materials', name: 'Manage Materials', component: () => import("@/views/Admin/Products/ManageMaterials.vue")},
-            { path: 'manage-clubs', name: 'Manage Clubs', component: () => import("@/views/Admin/Products/ManageClubs.vue")}
+            { path: 'manage-clubs', name: 'Manage Clubs', component: () => import("@/views/Admin/Products/ManageClubs.vue")},
+            { path: 'manage-collections', name: 'Manage Collections', component: () => import("@/views/Admin/Products/ManageCollections.vue")}
         ]
     }
 ];

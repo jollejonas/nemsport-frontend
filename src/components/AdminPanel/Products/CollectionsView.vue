@@ -1,7 +1,7 @@
 <template>
   <div class="px-16 pt-16 w-full">
     <button @click="toggleDropdown" class="bg-green-600 text-white px-4 py-2 rounded-md">
-      Tilføj materiale
+      Tilføj kollektion
     </button>
     <div
       :class="`border border-gray-400 rounded-md mt-4 transform transition-all duration-200 ${state.isDropdownOpen ? 'opacity-100 scale-100 h-auto' : 'opacity-0 scale-95 h-0'} text-white w-full`"
@@ -10,24 +10,30 @@
         @submit.prevent="submitForm"
         :class="`py-4 px-10 ${state.isDropdownOpen ? 'block' : 'hidden'}`"
       >
-        <label for="material-name" class="block text-gray-900">Materiale navn</label>
+        <label for="collection-name" class="block text-gray-900">Kollektions navn</label>
         <input
           type="text"
-          name="material-name"
-          id="material-name"
+          name="collection-name"
+          id="collection-name"
           class="rounded-md text-gray-900 focus:ring-0 bg-transparent"
-          v-model="formData.name"
+          v-model="formData.collectionName"
         />
-        <label for="material-description" class="block text-gray-900 mt-2"
-          >Materiale beskrivelse</label
-        >
-        <textarea
-          type=""
-          name="material-description"
-          id="material-description"
-          class="rounded-md text-gray-900 focus:ring-0 bg-transparent w-96 h-52 resize-none block"
-          v-model="formData.description"
-        ></textarea>
+        <label for="collection-creation-date" class="block text-gray-900">Oprettelses dato</label>
+        <input
+          type="date"
+          name="collection-creation-date-name"
+          id="collection-creation-date"
+          class="rounded-md text-gray-900 focus:ring-0 bg-transparent"
+          v-model="formData.creationDate"
+        />
+        <label for="collection-expiry-date" class="block text-gray-900">Udløbsdato</label>
+        <input
+          type="date"
+          name="collection-expiry-date"
+          id="collection-expiry-date"
+          class="rounded-md text-gray-900 focus:ring-0 bg-transparent"
+          v-model="formData.expiryDate"
+        />
         <div class="flex justify-start"></div>
         <button type="submit" class="bg-green-600 text-white mt-2 px-4 py-2 rounded-md">
           Tilføj
@@ -42,18 +48,26 @@
     <table class="table-auto mx-auto mt-14">
       <thead>
         <tr>
-          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Materiale ID</th>
-          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Materiale</th>
-          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Beskrivelse</th>
+          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Kollektion ID</th>
+          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Kollektion navn</th>
+          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Oprettet dato</th>
+          <th class="border bg-gray-900 text-white border-gray-200 py-2 px-4">Udløbsdato</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="material in materials" :key="material.materialID">
-          <td class="border border-gray-200 py-2 px-4 text-center">{{ material.materialID }}</td>
-          <td class="border border-gray-200 py-2 px-4 text-center">{{ material.name }}</td>
-          <td class="border border-gray-200 py-2 px-4 text-center">{{ material.description }}</td>
+        <tr v-for="collection in collections" :key="collection.collectionID">
           <td class="border border-gray-200 py-2 px-4 text-center">
-            <button @click="editMaterial(material.materialID!)" class="p-2">
+            {{ collection.collectionID }}
+          </td>
+          <td class="border border-gray-200 py-2 px-4 text-center">
+            {{ collection.collectionName }}
+          </td>
+          <td class="border border-gray-200 py-2 px-4 text-center">
+            {{ collection.creationDate }}
+          </td>
+          <td class="border border-gray-200 py-2 px-4 text-center">{{ collection.expiryDate }}</td>
+          <td class="border border-gray-200 py-2 px-4 text-center">
+            <button @click="editCollection(collection.collectionID!)" class="p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -71,7 +85,7 @@
             </button>
           </td>
           <td class="border border-gray-200 py-2 px-4 text-center">
-            <button @click="deleteMaterial(material.materialID!)" class="p-2">
+            <button @click="deleteCollection(collection.collectionID!)" class="p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -98,20 +112,27 @@ import { ref } from 'vue'
 import createApiService from '@/services/apiService'
 import { useDropdownForm } from '@/composables/useDropdownForm'
 
-interface Material {
-  materialID?: number
-  name: string
-  description: string
+interface Collection {
+  collectionID?: number
+  collectionName: string
+  creationDate: string
+  expiryDate: string
 }
 
-const materialService = createApiService<Material>('https://localhost:7185/api/Materials')
+const apiService = createApiService('https://localhost:7185/api/Collections')
 
-const formData = ref({ name: '', description: '' })
-const materials = ref<Material[]>([])
+const formData = ref({
+  collectionName: '',
+  creationDate: '',
+  expiryDate: ''
+})
 
-const initialFormState: Material = {
-  name: '',
-  description: ''
+const collections = ref<Collection[]>([])
+
+const initialFormState: Collection = {
+  collectionName: '',
+  creationDate: '',
+  expiryDate: ''
 }
 
 const { state, toggleDropdown } = useDropdownForm({
@@ -120,36 +141,36 @@ const { state, toggleDropdown } = useDropdownForm({
 
 async function submitForm() {
   try {
-    await materialService.create(formData.value)
+    await apiService.create(formData.value)
     // Reset form
     state.resetForm()
     // Fetch updated list
-    fetchMaterials()
+    fetchCollections()
   } catch (error) {
     console.error('Error posting material:', error)
   }
 }
 
-async function fetchMaterials() {
+async function fetchCollections() {
   try {
-    materials.value = await materialService.fetchAll()
+    collections.value = (await apiService.fetchAll()) as any
   } catch (error) {
-    console.error('Error getching materials:', error)
+    console.error('Error fetching collection:', error)
   }
 }
 
-async function deleteMaterial(materialID: number) {
+async function deleteCollection(collectionID: number) {
   try {
-    await materialService.delete(materialID)
-    await fetchMaterials()
+    await apiService.delete(collectionID)
+    await fetchCollections()
   } catch (error) {
-    console.error('Error deleting material:', error)
+    console.error('Error deleting collection:', error)
   }
 }
 
-async function editMaterial(materialID: number) {
-  console.log(materialID)
+async function editCollection(collectionID: number) {
+  console.log(collectionID)
 }
 // Initial fetch of materials
-fetchMaterials()
+fetchCollections()
 </script>

@@ -204,6 +204,11 @@ c36 -72 109 -78 82 -7 -14 36 -11 55 10 73 39 32 37 132 -3 147 -44 17 -144
           class="block px-4 py-1 hover:bg-gray-800 rounded transition duration-200"
           >Klubber</router-link
         >
+        <router-link
+          to="/admin/manage-collections/"
+          class="block px-4 py-1 hover:bg-gray-800 rounded transition duration-200"
+          >Kollektioner</router-link
+        >
         <!-- Add more submenu items here -->
       </div>
     </nav>
